@@ -177,7 +177,3 @@ plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis('off')
 plt.title('WordCloud des Conditions Atmosphériques')
 st.pyplot()
-
-pip freeze > requirements.txt
-
-df.to_csv('accidentsVelo_clean.csv', index=False)
