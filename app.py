@@ -19,8 +19,22 @@ num_variables = df.shape[1]
 print(f"Nombre d'observations: {num_observations}")
 print(f"Nombre de variables: {num_variables}")
 
-stats_desc = df.describe(include='all')
-print(stats_desc)
+
+# Description du jeu de données
+st.header("Description du jeu de données")
+st.write("Origine des données : [Lien vers le jeu de données](https://opendata.paris.fr/explore/dataset/inventaire-des-emissions-de-gaz-a-effet-de-serre-du-territoire/dataviz/)")
+st.write(f"Nombre d'années d'observation : {data.shape[0]}")
+st.write(f"Nombre de variables : {data.shape[1]-2}") # On parle seulement ici des données collectées sur le site et pas des variables créées
+st.write("Types de variables :")
+st.write(data.dtypes)
+st.write("Nombre de valeurs manquantes par variable :")
+st.write(data.isnull().sum())
+
+st.header("Statistiques descriptives")
+st.write(df.describe())
+
+# Visualisations
+st.header("Visualisations")
 
 # Suppression ou imputation des valeurs manquantes
 df = df.dropna()  # Exemple de suppression des lignes avec des valeurs manquantes
@@ -42,7 +56,11 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-st.header("Distribution des Heures des Accidents")
+# Conversion de l'heure en format datetime pour une meilleure gestion par Matplotlib
+df['heure_datetime'] = df['heure'].apply(lambda x: datetime.strptime(str(x), '%H'))
+
+# Affichage dans Streamlit
+st.header("Distribution des heures des accidents")
 
 # Filtre interactif pour le mois
 selected_month = st.selectbox('Sélectionner un mois', df['mois'].unique())
@@ -50,9 +68,10 @@ selected_month = st.selectbox('Sélectionner un mois', df['mois'].unique())
 # Création de l'histogramme avec filtrage par mois
 filtered_data = df[df['mois'] == selected_month]
 fig, ax = plt.subplots()
-sns.histplot(filtered_data['heure'], bins=24, kde=True, ax=ax)
+sns.histplot(filtered_data['heure_datetime'], bins=24, kde=True, ax=ax)
 ax.set_xlabel('Heure de l\'accident')
 ax.set_ylabel('Nombre d\'accidents')
+ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%H:%M'))  # Format de l'axe des abscisses
 st.pyplot(fig)
 
 
